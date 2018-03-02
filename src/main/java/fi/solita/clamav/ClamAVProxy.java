@@ -2,6 +2,9 @@ package fi.solita.clamav;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +24,13 @@ public class ClamAVProxy {
   @Value("${clamd.timeout}")
   private int timeout;
 
+  private DateFormat df = new SimpleDateFormat("[yyyy-MM-dd'T'HH:mm:ss.SSS z]");
   /**
    * @return Clamd status.
    */
   @RequestMapping("/")
   public String ping() throws IOException {
+    System.out.println(df.format(new Date()) + " received ping");
     ClamAVClient a = new ClamAVClient(hostname, port, timeout);
     return "Clamd responding: " + a.ping() + "\n";
   }
