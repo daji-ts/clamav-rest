@@ -1,5 +1,7 @@
 package fi.solita.clamav;
 
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -35,7 +37,7 @@ public class ClamAVProxy {
     return "Clamd responding: " + a.ping() + "\n";
   }
 
-  @RequestMapping(value="/file", method=RequestMethod.POST, consumes = "application/octet-stream")
+  @RequestMapping(value="/file", method=RequestMethod.POST, consumes = "application/octet-stream", produces = {TEXT_PLAIN_VALUE})
   public @ResponseBody String handleFileDirect(InputStream content) throws IOException{
     ClamAVClient a = new ClamAVClient(hostname, port, timeout);
     byte[] r = a.scan(content);
