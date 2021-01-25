@@ -1,14 +1,18 @@
 package fi.solita.clamav;
 
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ClamAVProxy {
@@ -22,26 +26,22 @@ public class ClamAVProxy {
   @Value("${clamd.timeout}")
   private int timeout;
 
+  private DateFormat df = new SimpleDateFormat("[yyyy-MM-dd'T'HH:mm:ss.SSS z]");
   /**
    * @return Clamd status.
    */
   @RequestMapping("/")
   public String ping() throws IOException {
+    System.out.println(df.format(new Date()) + " received ping");
     ClamAVClient a = new ClamAVClient(hostname, port, timeout);
     return "Clamd responding: " + a.ping() + "\n";
   }
 
-  /**
-   * @return Clamd scan result
-   */
-  @RequestMapping(value="/scan", method=RequestMethod.POST)
-  public @ResponseBody String handleFileUpload(@RequestParam("name") String name,
-                                               @RequestParam("file") MultipartFile file) throws IOException{
-    if (!file.isEmpty()) {
-      ClamAVClient a = new ClamAVClient(hostname, port, timeout);
-      byte[] r = a.scan(file.getInputStream());
-      return "Everything ok : " + ClamAVClient.isCleanReply(r) + "\n";
-    } else throw new IllegalArgumentException("empty file");
+  @RequestMapping(value="/file", method=RequestMethod.POST, consumes = "application/octet-stream", produces = {TEXT_PLAIN_VALUE})
+  public @ResponseBody String handleFileDirect(InputStream content) throws IOException{
+    ClamAVClient a = new ClamAVClient(hostname, port, timeout);
+    byte[] r = a.scan(content);
+    return "Everything ok : " + ClamAVClient.isCleanReply(r) + "\n";
   }
 
   /**

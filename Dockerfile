@@ -8,7 +8,7 @@ RUN find / | grep clamav-rest-.*.jar
 FROM centos:centos7
 
 
-MAINTAINER lokori <antti.virtanen@iki.fi>
+MAINTAINER product-security <prose@tradeshift.com>
 
 RUN yum update -y && yum install -y java-1.8.0-openjdk &&  yum install -y java-1.8.0-openjdk-devel && yum clean all
 
