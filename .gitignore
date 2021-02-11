@@ -85,3 +85,10 @@ local.properties
 .scala_dependencies
 .worksheet
 
+# Maven compiled resources
+target
+.classpath
+.project
+
+# Visual Studio Code
+settings.json
