@@ -21,15 +21,19 @@ http://linux.die.net/man/8/clamd
 
 Clamd protocol contains command such as shutdown so exposing clamd directly to external services is not a feasible option. Accessing clamd directly is fine if you are running single application and it's on the localhost. 
 
-## An example to build on
-
-This is is mainly an example, not a serious production ready server. You can customize this for your specific needs. Or rewrite it using something
-other than [Spring Boot](http://projects.spring.io/spring-boot/) if you wish.
-
-
 # Usage
 
-You have two options. You can use [Docker](https://www.docker.com/) and run a [Docker image](https://hub.docker.com/r/lokori/clamav-rest/) to test it. The Docker image is based on the supplied [Dockerfile specification](https://github.com/solita/clamav-rest/blob/master/Dockerfile).
+`clamav-rest`, being just a proxy, relies on a running instance of [mkdockx/docker-clamav](https://hub.docker.com/r/mkodockx/docker-clamav) - a self-updating dockerized ClamAV scanner.
+To run `docker-clamav`:
+```
+  docker run -d --name docker-clamav -p 3310:3310 -v clamav:/var/lib/clamav mkodockx/docker-clamav
+```
+> :warning: `docker-clamav` takes up a lot of mem to download virus definitions from the [CVD](https://www.clamav.net/documents/clamav-virus-database-faq) at startup. Your memory limit on Docker Desktop should be set to at least 3GB so it runs successfully.
+
+To run a docker image of `clamav-rest`, you can use [lokori/clamav-rest](https://hub.docker.com/r/lokori/clamav-rest):
+```
+  docker run -d --name clamav-rest -e 'CLAMD_HOST=docker-clamav' -p 8080:8080 --link docker-clamav:docker-clamav -t -i lokori/clamav-rest
+```
 
 Or you can build the JAR. This creates a stand-alone JAR with embedded [Jetty serlet container](http://www.eclipse.org/jetty/).
 
@@ -50,18 +54,24 @@ By default clamd is assumed to respond in a local virtual machine. Setting it up
 
 # Testing the REST service
 
-You can use [curl](http://curl.haxx.se/) as it's REST. Here's an example test session:
-
+You will need to run `docker-clamav` and a local `clamav-rest` to run the maven tests.
+To run both instances:
 ```
-curl localhost:8080
-Clamd responding: true
-
-curl -F "name=blabla" -F "file=@./eicar.txt" localhost:8080/scan
-Everything ok : false
+  docker-compose up
 ```
 
-EICAR is a test file which is recognized as a virus by scanners even though it's not really a virus. Read more [EICAR information here](http://www.eicar.org/86-0-Intended-use.html).
+To run the tests:
+```
+  mvn test
+```
 
+You can also use [curl](http://curl.haxx.se/) as it's REST.
+Here's an example test session using an [EICAR file](http://www.eicar.org/86-0-Intended-use.html) - a test file recognized as a virus by scanners even though it's not really a virus:
+
+```
+  curl --header "Content-Type:application/octet-stream" --data-binary @<path/to/eicar/file> localhost:8080/file
+Everything ok : false  # i.e. virus found
+```
 
 # License
 

@@ -11,8 +11,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ClamAVProxy {
@@ -37,6 +39,9 @@ public class ClamAVProxy {
     return "Clamd responding: " + a.ping() + "\n";
   }
 
+  /**
+   * @return Clamd scan result
+   */
   @RequestMapping(value="/file", method=RequestMethod.POST, consumes = "application/octet-stream", produces = {TEXT_PLAIN_VALUE})
   public @ResponseBody String handleFileDirect(InputStream content) throws IOException{
     ClamAVClient a = new ClamAVClient(hostname, port, timeout);

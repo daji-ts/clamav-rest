@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  docker-clamav:
+    container_name: docker-clamav
+    image: mkodockx/docker-clamav
+    ports:
+      - "3310:3310"
+  clamav-rest:
+    build: . # run Dockerfile
+    container_name: clamav-rest
+    depends_on:
+      - docker-clamav
+    environment:
+      - CLAMD_HOST=docker-clamav
+    links:
+      - docker-clamav:docker-clamav
+    ports:
+      - "8080:8080"

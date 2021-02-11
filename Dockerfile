@@ -1,14 +1,14 @@
-#0
-FROM maven:latest as builder
+# Install dependencies
+FROM eu.gcr.io/tradeshift-base/maven:latest as builder
 COPY . .
 RUN mvn install -DskipTests
 RUN find / | grep clamav-rest-.*.jar
 
-#1
-FROM centos:centos7
+# CentOS 7
+FROM eu.gcr.io/tradeshift-base/centos:centos7
 
 
-MAINTAINER product-security <prose@tradeshift.com>
+LABEL maintainer="Product Security (prose@tradeshift.com)"
 
 RUN yum update -y && yum install -y java-1.8.0-openjdk &&  yum install -y java-1.8.0-openjdk-devel && yum clean all
 
