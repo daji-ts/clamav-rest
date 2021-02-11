@@ -24,15 +24,15 @@ Clamd protocol contains command such as shutdown so exposing clamd directly to e
 # Usage
 
 `clamav-rest`, being just a proxy, relies on a running instance of [mkdockx/docker-clamav](https://hub.docker.com/r/mkodockx/docker-clamav) - a self-updating dockerized ClamAV scanner.
-To run `docker-clamav`:
+To run `docker-clamav` as `clamav-server`:
 ```
-  docker run -d --name docker-clamav -p 3310:3310 -v clamav:/var/lib/clamav mkodockx/docker-clamav
+  docker run -d --name clamav-server -p 3310:3310 -v clamav:/var/lib/clamav mkodockx/docker-clamav
 ```
 > :warning: `docker-clamav` takes up a lot of mem to download virus definitions from the [CVD](https://www.clamav.net/documents/clamav-virus-database-faq) at startup. Your memory limit on Docker Desktop should be set to at least 3GB so it runs successfully.
 
 To run a docker image of `clamav-rest`, you can use [lokori/clamav-rest](https://hub.docker.com/r/lokori/clamav-rest):
 ```
-  docker run -d --name clamav-rest -e 'CLAMD_HOST=docker-clamav' -p 8080:8080 --link docker-clamav:docker-clamav -t -i lokori/clamav-rest
+  docker run -d --name clamav-rest -e 'CLAMD_HOST=clamav-server' -p 8080:8080 --link clamav-server:clamav-server -t -i lokori/clamav-rest
 ```
 
 Or you can build the JAR. This creates a stand-alone JAR with embedded [Jetty serlet container](http://www.eclipse.org/jetty/).
@@ -54,7 +54,7 @@ By default clamd is assumed to respond in a local virtual machine. Setting it up
 
 # Testing the REST service
 
-You will need to run `docker-clamav` and a local `clamav-rest` to run the maven tests.
+You will need to run `docker-clamav` (aka `clamav-server`) and a local `clamav-rest` to run the maven tests.
 To run both instances:
 ```
   docker-compose up
