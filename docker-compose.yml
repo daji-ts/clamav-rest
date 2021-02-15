@@ -6,6 +6,10 @@ services:
     image: mkodockx/docker-clamav
     ports:
       - "3310:3310"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3310"]
+      timeout: 120s
+      retries: 5
   clamav-rest:
     build: . # run Dockerfile
     container_name: clamav-rest
@@ -17,3 +21,9 @@ services:
       - clamav-server:clamav-server
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      timeout: 120s
+      retries: 5
+  wait:
+    image: eu.gcr.io/tradeshift-base/wait
