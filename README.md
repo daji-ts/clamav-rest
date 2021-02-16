@@ -30,9 +30,9 @@ To run `docker-clamav` as `clamav-server`:
 ```
 > :warning: `docker-clamav` takes up a lot of mem to download virus definitions from the [CVD](https://www.clamav.net/documents/clamav-virus-database-faq) at startup. Your memory limit on Docker Desktop should be set to at least 3GB so it runs successfully.
 
-To run a docker image of `clamav-rest`, you can use [lokori/clamav-rest](https://hub.docker.com/r/lokori/clamav-rest):
+To run a docker image of `clamav-rest`, you can use [eu.gcr.io/tradeshift-base/clamav-rest](https://console.cloud.google.com/gcr/images/tradeshift-base/EU/clamav-rest):
 ```
-  docker run -d --name clamav-rest -e 'CLAMD_HOST=clamav-server' -p 8080:8080 --link clamav-server:clamav-server -t -i lokori/clamav-rest
+  docker run -d --name clamav-rest -e 'CLAMD_HOST=clamav-server' -p 8080:8080 --link clamav-server:clamav-server -t -i eu.gcr.io/tradeshift-base/clamav-rest
 ```
 
 Or you can build the JAR. This creates a stand-alone JAR with embedded [Jetty serlet container](http://www.eclipse.org/jetty/).
