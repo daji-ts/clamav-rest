@@ -30,9 +30,9 @@ To run `docker-clamav` as `clamav-server`:
 ```
 > :warning: `docker-clamav` takes up a lot of mem to download virus definitions from the [CVD](https://www.clamav.net/documents/clamav-virus-database-faq) at startup. Your memory limit on Docker Desktop should be set to at least 3GB so it runs successfully.
 
-To run a docker image of `clamav-rest`, you can use [eu.gcr.io/tradeshift-base/clamav-rest](https://console.cloud.google.com/gcr/images/tradeshift-base/EU/clamav-rest):
+To run a docker image of `clamav-rest`, you can use [eu.gcr.io/tradeshift-base/clamav-rest](https://console.cloud.google.com/gcr/images/tradeshift-base/EU/clamav-rest) once you pick a tag to use:
 ```
-  docker run -d --name clamav-rest -e 'CLAMD_HOST=clamav-server' -p 8080:8080 --link clamav-server:clamav-server -t -i eu.gcr.io/tradeshift-base/clamav-rest
+  docker run -d --name clamav-rest -e 'CLAMD_HOST=clamav-server' -p 8080:8080 --link clamav-server:clamav-server -t -i eu.gcr.io/tradeshift-base/clamav-rest:<tag>
 ```
 
 Or you can build the JAR. This creates a stand-alone JAR with embedded [Jetty serlet container](http://www.eclipse.org/jetty/).
@@ -72,6 +72,9 @@ Here's an example test session using an [EICAR file](http://www.eicar.org/86-0-I
   curl --header "Content-Type:application/octet-stream" --data-binary @<path/to/eicar/file> localhost:8080/file
 Everything ok : false  # i.e. virus found
 ```
+
+# Deployment
+To deploy a version of `clamav-rest`, you must replace `service.version` in [tradeshift-clamav's values.yaml file](https://github.com/Tradeshift/tradeshift-clamav/blob/master/kubernetes/charts/clamav-rest/values.yaml). Make sure the image is published in [eu.gcr.io/tradeshift-base/clamav-rest](https://eu.gcr.io/tradeshift-base/clamav-rest)
 
 # License
 

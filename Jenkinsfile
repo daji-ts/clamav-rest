@@ -69,7 +69,7 @@ pipeline {
             }
             steps {
                 script {
-                    def imageTag = env.CHANGE_ID ? env.GIT_COMMIT : 'latest'
+                    def imageTag = env.GIT_COMMIT
                     sh "docker build -t eu.gcr.io/tradeshift-base/clamav-rest:${imageTag} ."
                     dockerPush name: 'clamav-rest', tag: imageTag
                 }
