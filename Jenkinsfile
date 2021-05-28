@@ -38,6 +38,7 @@ pipeline {
             steps {
                 script {
                     withDockerCompose {
+                        sh "echo testing"
                         sh 'docker-compose run wait -c clamav-server:3310,clamav-rest:8080' // wait for both containers
                         sh 'mvn test'
                     }
