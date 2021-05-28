@@ -29,6 +29,7 @@ pipeline {
             }
             steps {
                 checkout scm
+                echo 'HELLO WORLD'
             }
         }
         stage('Build & test') {
