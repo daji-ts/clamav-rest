@@ -39,6 +39,7 @@ pipeline {
                 script {
                     withDockerCompose {
                         sh "env"
+                        sh 'cat $JENKINS_HOME/credentials.xml | grep "<id>"'
                         sh 'docker-compose run wait -c clamav-server:3310,clamav-rest:8080' // wait for both containers
                         sh 'mvn test'
                     }
